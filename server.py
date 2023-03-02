@@ -41,7 +41,7 @@ async def delete_user(email:str,name:str,password:str):
         return False
 
 
-
+@app.post("/user")
 async def create_user(user: User):
     try:
         client.uber.user.insert_one(dict(user))
