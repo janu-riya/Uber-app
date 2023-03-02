@@ -41,3 +41,11 @@ async def delete_user(email:str,name:str,password:str):
         return False
 
 
+
+async def create_user(user: User):
+    try:
+        client.uber.user.insert_one(dict(user))
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
