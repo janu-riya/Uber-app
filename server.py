@@ -10,10 +10,12 @@ class User(BaseModel):
     password : str
 
 @app.get("/user")
-async def get_user(email: str):
+async def get_user(email: str,name: str,password: str):
     try:
         filter ={
+        'name': name,
         'email' : email,
+        'password' : password,
         }
         project = {
         '_id':0,
@@ -23,3 +25,19 @@ async def get_user(email: str):
     except Exception as e:
         print(str(e))
         return False
+    
+@app.delete("/user")
+async def delete_user(email:str,name:str,password:str):
+    try:
+        filter = {
+            'name': name,
+            'email' :email,
+            'password':password,
+        }
+        client.uber.user.delete_one(filter=filter)
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
+
+
