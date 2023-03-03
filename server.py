@@ -49,3 +49,22 @@ async def create_user(user: User):
     except Exception as e:
         print(str(e))
         return False
+class  User(BaseModel):
+    query :dict ={}
+    key: str
+    value:str 
+
+@app.put("/user")
+async def change_user(user: User):
+    try:
+        filter= user.query
+        update={
+            '$set' :{
+            user.key :user.value
+            }
+        }
+        client.uber.user.update(filter,update=update)
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
