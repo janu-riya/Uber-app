@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 
 app = FastAPI()
+client = MongoClient("mongodb://localhost:27017")
+db = client["uber"]
 
 class User(BaseModel):
     name : str
@@ -27,12 +29,11 @@ async def get_user(email: str,name: str,password: str):
         return False
     
 @app.delete("/user")
-async def delete_user(email:str,name:str,password:str):
+async def delete_user(email:str):
     try:
         filter = {
-            'name': name,
             'email' :email,
-            'password':password,
+
         }
         client.uber.user.delete_one(filter=filter)
         return True
@@ -49,13 +50,14 @@ async def create_user(user: User):
     except Exception as e:
         print(str(e))
         return False
-class  User(BaseModel):
+    
+class CUser(BaseModel):
     query :dict ={}
     key: str
     value:str 
 
 @app.put("/user")
-async def change_user(user: User):
+async def change_user(user: CUser):
     try:
         filter= user.query
         update={
@@ -68,3 +70,4 @@ async def change_user(user: User):
     except Exception as e:
         print(str(e))
         return False
+
