@@ -169,10 +169,6 @@ def upload(file: UploadFile = File(...)):
 
 #Creating trips model......................................................
 
-
-
-
-
 class Trip(BaseModel):
     id : str = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
     starting_point:str
