@@ -5,7 +5,7 @@ import random, string
 
 app = FastAPI()
 client = MongoClient("mongodb://localhost:27017")
-db = client["uber"]
+
 #user
 
 class User(BaseModel):
