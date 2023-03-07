@@ -22,8 +22,7 @@ async def get_user(email: str):
         project = {
         '_id':0,
         }
-        client.uber.user.find_one(filter=filter, project=project)
-        return True
+        return dict(client.uber.user.find_one(filter=filter,projection=project))
     except Exception as e:
         print(str(e))
         return False
