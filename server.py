@@ -113,7 +113,7 @@ async def get_driver(email:str):
         project = {
         '_id':0,
         }
-        client.uber.driver.find_one(filter=filter, project=project)
+        return dict(client.uber.driver.find_one(filter=filter, projection=project))
         return True
     except Exception as e:
         print(str(e))
@@ -187,9 +187,11 @@ async def get_trip(id:str):
          filter ={
         'id' : id,
         }
+         project = {
+        '_id':0,
+        }
+         return dict(client.uber.trip.find_one(filter=filter,projection=project))
          
-         client.uber.trip.find_one(filter=filter)
-         return True
     except Exception as e:
         print(str(e))
         return False
