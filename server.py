@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from pymongo import MongoClient
+import random, string
 
 app = FastAPI()
 client = MongoClient("mongodb://localhost:27017")
@@ -70,7 +71,7 @@ async def change_user(user: CUser):
         print(str(e))
         return False
 
-#Driver registration Model
+#Driver registration Model.....................................................
 
 class Driver(BaseModel):
     name: str
@@ -78,12 +79,28 @@ class Driver(BaseModel):
     license_no: str
     Aadhar_id: str
     password: str
+    pan: str
 
 @app.post("/driver")
 async def create_driver(driver: Driver):
     try:
-        client.uber.driver.insert_one(dict(driver))
-        return True
+        filter ={
+            'email': driver.email,
+        }
+        lfilter ={
+            'license_no': driver.license_no,
+        }
+        afilter ={
+            'Aadhar_id': driver.Aadhar_id,
+        }
+        pfilter ={
+            'pan': driver.pan
+        }
+        if client.uber.driver.email == 0 and client.uber.driver.license_no == 0 and client.uber.driver.Aadhar_id == 0 and client.uber.driver.pan == 0:
+            client.uber.driver.insert_one(dict(driver))
+            return True
+        else:
+            return {"error":"not created"}
     except Exception as e:
         print(str(e))
         return False
@@ -149,3 +166,34 @@ def upload(file: UploadFile = File(...)):
         file.file.close()
 
     return {"message": f"Successfully uploaded {file.filename}"}
+
+#Creating trips model......................................................
+
+class Trip(BaseModel):
+    id : str =''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    starting_point: str
+    ending_point: str
+    distance: float
+    customer_id: str
+    driver_id: str
+    fare:float = 50.0
+    status: str = "Initiated"
+
+@app.post("/trip")
+async def create_trip(trip: Trip):
+    try:
+        filter={
+            'email': trip.driver_id
+        }
+        ufilter={
+            'email': trip.customer_id
+        }
+        if client.uber.trip.driver_id == 1 and client.uber.trip.customer_id == 1:
+            client.uber.trip.insert_one(dict(trip))
+            return trip.id
+        else:
+            return {"error":"not initiated"}
+    
+    except Exception as e:
+        print(str(e))
+        return False
