@@ -77,7 +77,7 @@ class Driver(BaseModel):
     name: str
     email: str
     license_no: str
-    Aadhar_id: str
+    aadhar_id: str
     password: str
     pan: str
 
@@ -91,12 +91,12 @@ async def create_driver(driver: Driver):
             'license_no': driver.license_no,
         }
         afilter ={
-            'Aadhar_id': driver.Aadhar_id,
+            'Aadhar_id': driver.aadhar_id,
         }
         pfilter ={
             'pan': driver.pan
         }
-        if client.uber.driver.email == 0 and client.uber.driver.license_no == 0 and client.uber.driver.Aadhar_id == 0 and client.uber.driver.pan == 0:
+        if client.uber.driver.count_documents(filter) == 0 and client.uber.driver.count_documents(lfilter) == 0 and client.uber.driver.count_documents(afilter) == 0 and client.uber.driver.count_documents(pfilter) == 0:
             client.uber.driver.insert_one(dict(driver))
             return True
         else:
