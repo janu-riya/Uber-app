@@ -169,31 +169,85 @@ def upload(file: UploadFile = File(...)):
 
 #Creating trips model......................................................
 
+
+
+
+
 class Trip(BaseModel):
-    id : str =''.join(random.choices(string.ascii_letters + string.digits, k=16))
-    starting_point: str
-    ending_point: str
-    distance: float
-    customer_id: str
-    driver_id: str
+    id : str = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    starting_point:str
+    ending_point:str
+    distance:float
+    customer_id:str
+    driver_id:str
+    vehicle_id:str
     fare:float = 50.0
-    status: str = "Initiated"
+    status: str = "initiated"
+    
+
+
+@app.get("/trip")
+async def get_trip(id:str):
+    try:
+         filter ={
+        'id' : id,
+        }
+         
+         client.uber.trip.find_one(filter=filter)
+         return True
+    except Exception as e:
+        print(str(e))
+        return False
 
 @app.post("/trip")
-async def create_trip(trip: Trip):
+async def create_trip(trip:Trip):
+    
     try:
         filter={
-            'email': trip.driver_id
+        'email': trip.driver_id
         }
-        ufilter={
-            'email': trip.customer_id
+        ufilter = {
+            "email": trip.customer_id
         }
-        if client.uber.trip.driver_id == 1 and client.uber.trip.customer_id == 1:
+        if(client.uber.driver.count_documents(filter)) == 1 and client.uber.user.count_documents(ufilter) == 1:
             client.uber.trip.insert_one(dict(trip))
             return trip.id
         else:
-            return {"error":"not initiated"}
+            return "not initiated"
+            
+    except Exception as e:
+        print(str(e))
+        return False
+class CTrip(BaseModel):
+    query :dict ={}
+    key: str
+    value:str 
+
+@app.put("/trip")
+async def change_trip(trip: CTrip):
+    try:
+        filter= trip.query
+        update={
+            '$set' :{
+            trip.key :trip.value
+            }
+        }
+        client.uber.trip.update(filter,update=update)
+        return True
     
+    except Exception as e:
+        print(str(e))
+        return False
+    
+@app.delete("/trip")
+async def delete_trip(trip_id:str):
+    try:
+        filter = {
+            'id' :id,
+
+        }
+        client.uber.trip.delete_one(filter=filter)
+        return True
     except Exception as e:
         print(str(e))
         return False
