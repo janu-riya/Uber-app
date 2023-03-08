@@ -316,3 +316,70 @@ async def delete_car(registration_no:str):
         print(str(e))
         return False      
   
+   #Bike REGISTRATION
+
+class bike(BaseModel):
+    bike_model : str
+    bike_registration_number : str
+    bike_insurance_number : str
+    bike_number:str
+
+@app.get("/bike")
+async def get_bike(bike_registration_number : str):
+    try:
+        filter ={
+        
+        'bike_registration_number' : bike_registration_number,
+        
+        }
+        project = {
+        '_id':0,
+        }
+        client.uber.bike.find_one(filter=filter, project=project)
+        return True
+    except Exception as e:
+        print(str(e))
+        return False    
+
+@app.post("/bike")
+async def create_bike(bike: bike):
+    try:
+        client.uber.bike.insert_one(dict(bike))
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
+    
+
+class Cbike(BaseModel):
+    query :dict ={}
+    key: str
+    value:str 
+
+@app.put("/bike")
+async def change_bike(bike: Cbike):
+    try:
+        filter= bike.query
+        update={
+            '$set' :{
+            bike.key :bike.value
+            }
+        }
+        client.uber.bike.update(filter,update=update)
+        return True
+    except Exception as e:
+        print(str(e))
+        return False    
+
+@app.delete("/bike")
+async def delete_bike(bike_model:str):
+    try:
+        filter = {
+            'bike_model' : bike_model,
+
+        }
+        client.uber.bike.delete_one(filter=filter)
+        return True
+    except Exception as e:
+        print(str(e))
+        return False 
