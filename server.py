@@ -249,7 +249,7 @@ async def delete_trip(trip_id:str):
         print(str(e))
         return False
     
-        #CAR REGISTRATION
+#________________________________________________________CAR REGISTRATION________________________________________________________________
 
 class Car(BaseModel):
     car_model : str
@@ -314,7 +314,20 @@ async def delete_car(registration_no:str):
         return True
     except Exception as e:
         print(str(e))
-        return False      
+        return False  
+
+@app.post("/car_rc_book")
+def car_rc_book(file: UploadFile = File(...)):
+    try:
+        contents = file.file.read()
+        with open(file.filename, 'wb') as f:
+            f.write(contents)
+    except Exception:
+        return {"message": "There was an error uploading the file"}
+    finally:
+        file.file.close()
+
+    return {"message": f"Successfully uploaded {file.filename}"}       
   
    #Bike REGISTRATION
 
@@ -396,83 +409,3 @@ def bike_rc_upload(file: UploadFile = File(...)):
         file.file.close()
 
     return {"message": f"Successfully uploaded {file.filename}"}
-
-#________________________________________________________CAR REGISTRATION________________________________________________________________
-
-class Car(BaseModel):
-    car_model : str
-    registration_no : str
-    insurance : str
-
-@app.get("/car")
-async def get_car(registration_no : str):
-    try:
-        filter ={
-        
-        'registration_no' : registration_no,
-        
-        }
-        project = {
-        '_id':0,
-        }
-        client.uber.car.find_one(filter=filter, project=project)
-        return True
-    except Exception as e:
-        print(str(e))
-        return False    
-
-@app.post("/car")
-async def create_car(car: Car):
-    try:
-        client.uber.car.insert_one(dict(car))
-        return True
-    except Exception as e:
-        print(str(e))
-        return False
-    
-
-class Ccar(BaseModel):
-    query :dict ={}
-    key: str
-    value:str 
-
-@app.put("/car")
-async def change_car(car: Ccar):
-    try:
-        filter= car.query
-        update={
-            '$set' :{
-            car.key :car.value
-            }
-        }
-        client.uber.car.update(filter,update=update)
-        return True
-    except Exception as e:
-        print(str(e))
-        return False    
-
-@app.delete("/car")
-async def delete_car(registration_no:str):
-    try:
-        filter = {
-            'registration_no' : registration_no,
-
-        }
-        client.uber.car.delete_one(filter=filter)
-        return True
-    except Exception as e:
-        print(str(e))
-        return False  
-
-@app.post("/car_rc_book")
-def car_rc_book(file: UploadFile = File(...)):
-    try:
-        contents = file.file.read()
-        with open(file.filename, 'wb') as f:
-            f.write(contents)
-    except Exception:
-        return {"message": "There was an error uploading the file"}
-    finally:
-        file.file.close()
-
-    return {"message": f"Successfully uploaded {file.filename}"}  
