@@ -315,3 +315,4 @@ async def delete_car(registration_no:str):
     except Exception as e:
         print(str(e))
         return False      
+  
